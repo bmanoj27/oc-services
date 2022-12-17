@@ -1,25 +1,25 @@
 $TTL  1D
-@     IN  SOA dns.ocp4.example.com. root.example.com. (
+@     IN  SOA dns.ftm4c.example.com. root.example.com. (
                 2019022400 ; serial
                 3h         ; refresh
                 15         ; retry
                 1w         ; expire
                 3h         ; minimum
               )
-          IN NS dns.ocp4.example.com.
-dns.ocp4      IN A 192.168.50.254
-api.ocp4      IN A 192.168.50.254
-api-int.ocp4  IN A 192.168.50.254
-*.apps.ocp4   IN A 192.168.50.254
-bootstrap.ocp4 IN A 192.168.50.9
-master01.ocp4 IN A 192.168.50.10
-etcd-0.ocp4 IN A 192.168.50.10
-_etcd-server-ssl._tcp.ocp4  IN SRV 0 10 2380 etcd-0.ocp4
-master02.ocp4 IN A 192.168.50.11
-etcd-1.ocp4 IN A 192.168.50.11
-_etcd-server-ssl._tcp.ocp4  IN SRV 0 10 2380 etcd-1.ocp4
-master03.ocp4 IN A 192.168.50.12
-etcd-2.ocp4 IN A 192.168.50.12
-_etcd-server-ssl._tcp.ocp4  IN SRV 0 10 2380 etcd-2.ocp4
-worker01.ocp4 IN A 192.168.50.13
-worker02.ocp4 IN A 192.168.50.14
+          IN NS dns.ftm4c.example.com.
+dns.ftm4c      IN A 192.168.18.230
+api.ftm4c      IN A 192.168.18.230
+api-int.ftm4c  IN A 192.168.18.230
+*.apps.ftm4c   IN A 192.168.18.230
+bootstrap.ftm4c IN A 192.168.18.234
+master01.ftm4c IN A 192.168.18.231
+etcd-0.ftm4c IN A 192.168.18.231
+_etcd-server-ssl._tcp.ftm4c  IN SRV 0 10 2380 etcd-0.ftm4c
+master02.ftm4c IN A 192.168.18.232
+etcd-1.ftm4c IN A 192.168.18.232
+_etcd-server-ssl._tcp.ftm4c  IN SRV 0 10 2380 etcd-1.ftm4c
+master03.ftm4c IN A 192.168.18.233
+etcd-2.ftm4c IN A 192.168.18.233
+_etcd-server-ssl._tcp.ftm4c  IN SRV 0 10 2380 etcd-2.ftm4c
+worker01.ftm4c IN A 192.168.18.235
+worker02.ftm4c IN A 192.168.18.236

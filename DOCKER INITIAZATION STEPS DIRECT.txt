@@ -16,8 +16,16 @@ ii. Install yum-utils package & Add the package:
      yum install yum-utils
 	 sudo yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
 
-iii. Change the docker-ce.repo file located in /etc/yum.repos.d
-https://access.redhat.com/discussions/6249651
+iii. Change the docker-ce.repo file located in /etc/yum.repos.d (https://access.redhat.com/discussions/6249651)
+
+[docker-ce-stable]
+name=Docker CE Stable - $basearch
+baseurl=https://download.docker.com/linux/centos/$releasever/$basearch/stable
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+
  
 
 iv. Install & Start Docker Engine:

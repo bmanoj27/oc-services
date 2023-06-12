@@ -1,0 +1,174 @@
+https://www.ibm.com/docs/en/ftmfm/4.0.5?topic=rhoifo-installing-in-airgap-environment-by-using-portable-storage-device
+
+1. Prereq software.
+Install the following list of prerequisite software.
+Install Docker https://docs.docker.com/engine/install/rhel/.
+Install OpenSSL 1.11.1 or later.
+Install Podman. For more information, see Podman installation instructions.
+Install the skopeo command-line interface 1.0.0 or later. For more information, see Installing skopeo from packages.
+Install the IBM Cloud Pak® command-line interface (cloudctl). Install the version of the binary file for your platform. For more information, see cloud-pak-cli / https://github.com/IBM/cloud-pak-cli/releases https://www.ibm.com/docs/en/cpfs?topic=environment-bastion-host
+
+1.1.	Installing Docker Engine Registry:
+ i. Uninstall Existing Docker Installations:
+    yum remove docker podman runc
+
+ii. Install yum-utils package & Add the package:
+     yum install yum-utils
+	 sudo yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+
+iii. Change the docker-ce.repo file located in /etc/yum.repos.d
+https://access.redhat.com/discussions/6249651
+ 
+
+iv. Install & Start Docker Engine:
+sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+sudo systemctl start docker
+
+sudo systemctl status docker
+ 
+
+
+2. 
+mkdir $HOME/offline
+
+3. Create environment variables for the external host
+
+export CASE_NAME=ibm-ftm-check
+export CASE_VERSION=4.2.1
+export CASE_ARCHIVE=${CASE_NAME}-${CASE_VERSION}.tgz
+export CASE_INVENTORY=ibmFtmCheckOperator
+export CASE_INVENTORY_SETUP=${CASE_INVENTORY}Setup
+export OFFLINEDIR=$HOME/offline
+export OFFLINEDIR_ARCHIVE=offline.tgz
+export CASE_REMOTE_PATH=https://github.com/IBM/cloud-pak/raw/master/repo/case/${CASE_NAME}/${CASE_VERSION}/${CASE_ARCHIVE}
+export CASE_LOCAL_PATH=$OFFLINEDIR/$CASE_ARCHIVE
+
+export PORTABLE_DOCKER_REGISTRY_HOST=**registry-url**
+export PORTABLE_DOCKER_REGISTRY_PORT=5000
+export PORTABLE_DOCKER_REGISTRY=${PORTABLE_DOCKER_REGISTRY_HOST}:${PORTABLE_DOCKER_REGISTRY_PORT}
+export PORTABLE_DOCKER_REGISTRY_USER=admin
+export PORTABLE_DOCKER_REGISTRY_PASSWORD=password
+export PORTABLE_DOCKER_REGISTRY_PATH=${OFFLINEDIR}/imageregistry
+
+
+
+4.Download the installer and image inventory
+
+cloudctl case save \
+  --case ${CASE_REMOTE_PATH} \
+  --outputdir ${OFFLINEDIR}
+  
+
+
+5. Store the authentication credentials for all source Docker registries. All of the FTM offerings are stored in a private registry that requires authentication:
+cp.icr.io
+
+cloudctl case launch \
+  --case ${CASE_LOCAL_PATH} \
+  --inventory ${CASE_INVENTORY_SETUP} \
+  --action configure-creds-airgap \
+  --args "--registry cp.icr.io --user cp --pass ENTITLEMENT-KEY"
+  
+6.Store the authentication credentials of the Docker registry.
+
+cloudctl case launch \
+  --case ${CASE_LOCAL_PATH} \
+  --inventory ${CASE_INVENTORY_SETUP} \
+  --action configure-creds-airgap \
+  --args "--registry ${PORTABLE_DOCKER_REGISTRY} --user ${PORTABLE_DOCKER_REGISTRY_USER} --pass ${PORTABLE_DOCKER_REGISTRY_PASSWORD}"
+  
+  
+7. Run a Docker registry service on localhost.
+
+INITIALIZE
+
+cloudctl case launch \
+  --case ${CASE_LOCAL_PATH} \
+  --inventory ${CASE_INVENTORY_SETUP} \
+  --action init-registry \
+  --args "--registry ${PORTABLE_DOCKER_REGISTRY_HOST} --user ${PORTABLE_DOCKER_REGISTRY_USER}  --pass ${PORTABLE_DOCKER_REGISTRY_PASSWORD} --dir ${PORTABLE_DOCKER_REGISTRY_PATH}"
+  
+START
+
+cloudctl case launch \
+  --case ${CASE_LOCAL_PATH} \
+  --inventory ${CASE_INVENTORY_SETUP} \
+  --action start-registry \
+  --args "--registry ${PORTABLE_DOCKER_REGISTRY_HOST} --port ${PORTABLE_DOCKER_REGISTRY_PORT} --user ${PORTABLE_DOCKER_REGISTRY_USER} --pass ${PORTABLE_DOCKER_REGISTRY_PASSWORD} --dir ${PORTABLE_DOCKER_REGISTRY_PATH}"
+  
+  
+7.1::
+
+Add the certificate of the registry to docker insecure registry list. https://docs.docker.com/registry/insecure/
+
+Copy ca.crt to 
+
+mkdir -p /etc/docker/certs.d/utility.techzert.work:5000
+cp /root/offline/imageregistry/certs/ca.crt /etc/docker/certs.d/utility.techzert.work:5000/ca.crt 
+
+
+  
+  
+8. MIRRORING OPENSHIFT RELEASE IMAGES TO THE REGISTRY:
+8.1 DOWNLOAD PULL-SECRET AND ADD THE CREDENTIALS OF LOCAL REGISTRY.  (https://www.ibm.com/links?url=https%3A%2F%2Fconsole.redhat.com%2Fopenshift%2Finstall%2Fpull-secret)
+
+9. https://www.ibm.com/docs/en/storage-fusion/2.3?topic=myier-mirroring-openshift-container-platform-release-images-enterprise-registry
+
+SET ENVIRONMENTAL VARIABLES:
+
+OCP_RELEASE=4.12.19
+PRODUCT_REPO='openshift-release-dev'
+RELEASE_NAME="ocp-release"
+ARCHITECTURE=x86_64
+LOCAL_SECRET_JSON='/root/pull-secret.json'
+LOCAL_OCP_REGISTRY='utility.techzert.work:5000'
+LOCAL_OCP_REPOSITORY='ocp4/openshift'
+
+
+10.
+Login to the docker registry:
+
+docker login -u admin -p dockerregistry utility.techzert.work:5000
+
+11. MIRROR THE IMAGES:
+
+oc adm release mirror -a ${LOCAL_SECRET_JSON} --from=quay.io/${PRODUCT_REPO}/${RELEASE_NAME}:${OCP_RELEASE}-${ARCHITECTURE} --to=${LOCAL_OCP_REGISTRY}/${LOCAL_OCP_REPOSITORY} --to-release-image=${LOCAL_OCP_REGISTRY}/${LOCAL_OCP_REPOSITORY}:${OCP_RELEASE}-${ARCHITECTURE}
+
+
+
+**************
+info: Mirroring completed in 24m40.06s (11.3MB/s)
+
+Success
+Update image:  airgaputility.techzert.work:5000/ocp4/openshift:4.12.19-x86_64
+Mirror prefix: airgaputility.techzert.work:5000/ocp4/openshift
+Mirror prefix: airgaputility.techzert.work:5000/ocp4/openshift:4.12.19-x86_64
+
+To use the new mirrored repository to install, add the following section to the install-config.yaml:
+
+imageContentSources:
+- mirrors:
+  - airgaputility.techzert.work:5000/ocp4/openshift
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+  - airgaputility.techzert.work:5000/ocp4/openshift
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+
+
+To use the new mirrored repository for upgrades, use the following to create an ImageContentSourcePolicy:
+
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  name: example
+spec:
+  repositoryDigestMirrors:
+  - mirrors:
+    - airgaputility.techzert.work:5000/ocp4/openshift
+    source: quay.io/openshift-release-dev/ocp-release
+  - mirrors:
+    - airgaputility.techzert.work:5000/ocp4/openshift
+    source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+
+

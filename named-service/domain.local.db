@@ -1,12 +1,12 @@
 $TTL  1D
-@     IN  SOA dns.ftm4c.techzert.local. root.techzert.local. (
+@     IN  SOA dns.ftm4c.domain.local. root.domain.local. (
                 2019022400 ; serial
                 3h         ; refresh
                 15         ; retry
                 1w         ; expire
                 3h         ; minimum
               )
-          IN NS dns.ftm4c.techzert.local.
+          IN NS dns.ftm4c.domain.local.
 dns.ftm4c      IN A 192.168.18.230
 api.ftm4c      IN A 192.168.18.230
 api-int.ftm4c  IN A 192.168.18.230

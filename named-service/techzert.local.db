@@ -1,0 +1,32 @@
+$TTL  1D
+@     IN  SOA dns.ftm4c.techzert.local. root.techzert.local. (
+                2019022400 ; serial
+                3h         ; refresh
+                15         ; retry
+                1w         ; expire
+                3h         ; minimum
+              )
+          IN NS dns.ftm4c.techzert.local.
+dns.ftm4c      IN A 192.168.18.230
+api.ftm4c      IN A 192.168.18.230
+api-int.ftm4c  IN A 192.168.18.230
+*.apps.ftm4c   IN A 192.168.18.230
+master01.ftm4c IN A 192.168.18.232
+etcd-0.ftm4c IN A 192.168.18.232
+_etcd-server-ssl._tcp.ftm4c  IN SRV 0 10 2380 etcd-0.ftm4c
+master02.ftm4c IN A 192.168.18.233
+etcd-1.ftm4c IN A 192.168.18.233
+_etcd-server-ssl._tcp.ftm4c  IN SRV 0 10 2380 etcd-1.ftm4c
+master03.ftm4c IN A 192.168.18.234
+etcd-2.ftm4c IN A 192.168.18.234
+_etcd-server-ssl._tcp.ftm4c  IN SRV 0 10 2380 etcd-2.ftm4c
+worker01.ftm4c IN A 192.168.18.235
+worker02.ftm4c IN A 192.168.18.236
+worker03.ftm4c IN A 192.168.18.237
+worker04.ftm4c IN A 192.168.18.238
+worker05.ftm4c IN A 192.168.18.239
+worker06.ftm4c IN A 192.168.18.240
+worker07.ftm4c IN A 192.168.18.241
+worker08.ftm4c IN A 192.168.18.242
+worker09.ftm4c IN A 192.168.18.243
+worker10.ftm4c IN A 192.168.18.244

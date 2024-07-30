@@ -1,0 +1,24 @@
+$TTL  1D
+@     IN  SOA dns.ftm4c.techzert.local. root.techzert.local. (
+                2019022400 ; serial
+                3h         ; refresh
+                15         ; retry
+                1w         ; expire
+                3h         ; minimum
+              )
+          IN NS dns.ftm4c.techzert.local.
+230  IN PTR api.ftm4c.techzert.local.
+230  IN PTR api-int.ftm4c.techzert.local.
+232 IN PTR master01.ftm4c.techzert.local.
+233 IN PTR master02.ftm4c.techzert.local.
+234 IN PTR master03.ftm4c.techzert.local.
+235 IN PTR worker01.ftm4c.techzert.local.
+236 IN PTR worker02.ftm4c.techzert.local.
+237 IN PTR worker03.ftm4c.techzert.local.
+238 IN PTR worker04.ftm4c.techzert.local.
+239 IN PTR worker05.ftm4c.techzert.local.
+240 IN PTR worker06.ftm4c.techzert.local.
+241 IN PTR worker07.ftm4c.techzert.local.
+242 IN PTR worker08.ftm4c.techzert.local.
+243 IN PTR worker09.ftm4c.techzert.local.
+244 IN PTR worker10.ftm4c.techzert.local.

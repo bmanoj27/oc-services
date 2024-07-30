@@ -2,7 +2,8 @@
 
 #nonrunpod=$(oc get pods -A | grep -v Running | grep -v Completed)
 
-oc login -u kubeadmin -p $(cat /root/ftm4c/auth/kubeadmin-password) https://api.ftm4c.techzert.local:6443
+#Change the API Endpoint here.
+oc login -u kubeadmin -p $(cat /root/ftm4c/auth/kubeadmin-password) https://<API-ENDPOINT>:6443
 
 
 count_non=$(oc get pods -A --no-headers | grep -v Running | grep -v Completed | wc -l)
@@ -10,7 +11,7 @@ count_non=$(oc get pods -A --no-headers | grep -v Running | grep -v Completed | 
 if [[ ${count_non} -gt 0 ]]; then
 
 # Define recipient email address
-recipient="manojboche@techzert.com"
+recipient="<recipient-email-address>"
 
 # Define email subject
 subject="Failed/Error Pods in ftm4c Cluster at $(date "+%B %d %Y, %I:%M:%S %p")"
